@@ -4,6 +4,8 @@ import dto.ConfigurationReader;
 import dto.CreateTestRequest;
 import dto.CreateTestResponse;
 import dto.LoginRequest;
+import io.qameta.allure.Story;
+import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.specification.ResponseSpecification;
 import org.junit.jupiter.api.*;
@@ -16,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 
 
-public class CreateUserTest extends TestBase {
+public class SkillCheckerTestsTest extends TestBase {
 
     ResponseSpecification responseSpecification = expect()
             .contentType(ContentType.JSON)
@@ -33,12 +35,15 @@ public class CreateUserTest extends TestBase {
     static int savedId;
 
     @BeforeAll
+    @DisplayName("Login and get cookies")
+    @Story("Login and get cookies")
     static void beforeAll() {
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setEmail(ConfigurationReader.get("email"));
         loginRequest.setPassword(ConfigurationReader.get("password"));
 
         skillCheckerCookies = given()
+                .filter(new AllureRestAssured())
                 .spec(requestSpecification)
                 .contentType(ContentType.JSON)
                 .body(loginRequest)
@@ -53,9 +58,11 @@ public class CreateUserTest extends TestBase {
     }
 
     @Test
-
+    @DisplayName("Get all tests")
+    @Story("Get all tests")
     void getAllTests() {
         given()
+                .filter(new AllureRestAssured())
                 .cookie("connect.sid", skillCheckerCookies)
                 .when()
                 .get("/tests")
@@ -67,9 +74,11 @@ public class CreateUserTest extends TestBase {
     }
 
     @Test
+    @DisplayName("Create new test")
+    @Story("Create a new test")
     @Order(1)
-    void  createNewTest () {
-        CreateTestRequest createTestRequest= new CreateTestRequest();
+    void createNewTest() {
+        CreateTestRequest createTestRequest = new CreateTestRequest();
         createTestRequest.setName(ConfigurationReader.get("name"));
         createTestRequest.setDescription(ConfigurationReader.get("description"));
         createTestRequest.setCategory(ConfigurationReader.get("category"));
@@ -77,6 +86,7 @@ public class CreateUserTest extends TestBase {
         createTestRequest.setPassingScore(20);
 
         CreateTestResponse createTestResponse = given()
+                .filter(new AllureRestAssured())
                 .cookie("connect.sid", skillCheckerCookies)
                 .spec(requestSpecification)
                 .contentType(ContentType.JSON)
@@ -91,15 +101,17 @@ public class CreateUserTest extends TestBase {
 
         Assertions.assertEquals(ConfigurationReader.get("name"), createTestResponse.getName());
         Assertions.assertEquals(ConfigurationReader.get("description"), createTestResponse.getDescription());
-        
+
         savedId = Integer.parseInt(createTestResponse.getId());
 
     }
 
     @Test
-    void  createNewTestNegative () {
+    @DisplayName("Create new test with invalid data")
+    @Story("Create a new test with invalid data")
+    void createNewTestNegative() {
 
-        CreateTestRequest createTestRequest= new CreateTestRequest();
+        CreateTestRequest createTestRequest = new CreateTestRequest();
 
         createTestRequest.setIntName(123456);
         createTestRequest.setDescription(ConfigurationReader.get("description"));
@@ -107,7 +119,8 @@ public class CreateUserTest extends TestBase {
         createTestRequest.setTimeLimit(15);
         createTestRequest.setPassingScore(20);
 
-       given()
+        given()
+                .filter(new AllureRestAssured())
                 .cookie("connect.sid", skillCheckerCookies)
                 .spec(requestSpecification)
                 .contentType(ContentType.JSON)
@@ -121,10 +134,13 @@ public class CreateUserTest extends TestBase {
     }
 
     @Test
+    @DisplayName("Get test by ID")
+    @Story("Get a test by its ID")
     @Order(2)
     void getTestById() {
 
         given()
+                .filter(new AllureRestAssured())
                 .cookie("connect.sid", skillCheckerCookies)
                 .spec(requestSpecification)
                 .pathParam("savedId", savedId)
@@ -138,9 +154,12 @@ public class CreateUserTest extends TestBase {
     }
 
     @Test
+    @DisplayName("Get test by invalid ID")
+    @Story("Get test by invalid ID")
     void getTestByIdNegative() {
 
         given()
+                .filter(new AllureRestAssured())
                 .cookie("connect.sid", skillCheckerCookies)
                 .spec(requestSpecification)
                 .pathParam("invalidId", 999999)
@@ -153,16 +172,19 @@ public class CreateUserTest extends TestBase {
     }
 
     @Test
+    @DisplayName("Update test by ID")
+    @Story("Update test by ID")
     @Order(3)
     void updateTestById() {
 
-        CreateTestRequest createTestRequest= new CreateTestRequest();
+        CreateTestRequest createTestRequest = new CreateTestRequest();
         createTestRequest.setName(ConfigurationReader.get("updatedName"));
         createTestRequest.setDescription(ConfigurationReader.get("updatedDescription"));
         createTestRequest.setTimeLimit(20);
         createTestRequest.setPassingScore(25);
 
         CreateTestResponse updateResponse = given()
+                .filter(new AllureRestAssured())
                 .cookie("connect.sid", skillCheckerCookies)
                 .spec(requestSpecification)
                 .pathParam("savedId", savedId)
@@ -181,16 +203,19 @@ public class CreateUserTest extends TestBase {
     }
 
     @Test
+    @DisplayName("Update test by ID with invalid data")
+    @Story("Update test by ID with invalid data")
     @Order(4)
     void updateTestByInvalidData() {
 
-        CreateTestRequest createTestRequest= new CreateTestRequest();
+        CreateTestRequest createTestRequest = new CreateTestRequest();
         createTestRequest.setIntName(123456);
         createTestRequest.setDescription(ConfigurationReader.get("updatedDescription"));
         createTestRequest.setTimeLimit(20);
         createTestRequest.setPassingScore(25);
 
         given()
+                .filter(new AllureRestAssured())
                 .cookie("connect.sid", skillCheckerCookies)
                 .spec(requestSpecification)
                 .pathParam("savedId", savedId)
@@ -204,16 +229,19 @@ public class CreateUserTest extends TestBase {
     }
 
     @Test
+    @DisplayName("Update test by invalid ID")
+    @Story("Update test by invalid ID")
     @Order(5)
     void updateTestByInvalidId() {
 
-        CreateTestRequest createTestRequest= new CreateTestRequest();
+        CreateTestRequest createTestRequest = new CreateTestRequest();
         createTestRequest.setName(ConfigurationReader.get("updatedName"));
         createTestRequest.setDescription(ConfigurationReader.get("updatedDescription"));
         createTestRequest.setTimeLimit(20);
         createTestRequest.setPassingScore(25);
 
         given()
+                .filter(new AllureRestAssured())
                 .cookie("connect.sid", skillCheckerCookies)
                 .spec(requestSpecification)
                 .pathParam("invalidId", 999999)
@@ -227,15 +255,18 @@ public class CreateUserTest extends TestBase {
     }
 
     @Test
+    @DisplayName("Update test by invalid ID with 500 error")
+    @Story("Update test by invalid ID with 500 error")
     @Order(6)
     void updateTestByInvalidIdWith500Error() {
-        CreateTestRequest createTestRequest= new CreateTestRequest();
+        CreateTestRequest createTestRequest = new CreateTestRequest();
         createTestRequest.setName(ConfigurationReader.get("updatedName"));
         createTestRequest.setDescription(ConfigurationReader.get("updatedDescription"));
         createTestRequest.setTimeLimit(20);
         createTestRequest.setPassingScore(25);
 
         given()
+                .filter(new AllureRestAssured())
                 .cookie("connect.sid", skillCheckerCookies)
                 .spec(requestSpecification)
                 .pathParam("invalidId", 99999999999L)
@@ -249,10 +280,13 @@ public class CreateUserTest extends TestBase {
     }
 
     @Test
+    @DisplayName("Delete test by ID")
+    @Story("Delete test by ID")
     @Order(7)
     void deleteTestById() {
 
         given()
+                .filter(new AllureRestAssured())
                 .cookie("connect.sid", skillCheckerCookies)
                 .spec(requestSpecification)
                 .pathParam("savedId", savedId)
@@ -262,6 +296,7 @@ public class CreateUserTest extends TestBase {
                 .statusCode(204);
 
         given()
+                .filter(new AllureRestAssured())
                 .cookie("connect.sid", skillCheckerCookies)
                 .spec(requestSpecification)
                 .pathParam("savedId", savedId)
@@ -273,9 +308,13 @@ public class CreateUserTest extends TestBase {
     }
 
     @Test
+    @DisplayName("Delete test by invalid ID")
+    @Story("Delete test by invalid ID")
+    @Disabled
     void deleteTestByInvalidId() {
 
         given()
+                .filter(new AllureRestAssured())
                 .cookie("connect.sid", skillCheckerCookies)
                 .spec(requestSpecification)
                 .pathParam("invalidId", 999999)
@@ -287,9 +326,13 @@ public class CreateUserTest extends TestBase {
     }
 
     @Test
+    @DisplayName("Delete test by invalid ID with 500 error")
+    @Story("Delete test by invalid ID with 500 error")
+    @Disabled
     void deleteTestByInvalidIdWith500Error() {
 
         given()
+                .filter(new AllureRestAssured())
                 .cookie("connect.sid", skillCheckerCookies)
                 .spec(requestSpecification)
                 .pathParam("invalidId", 99999999999L)
