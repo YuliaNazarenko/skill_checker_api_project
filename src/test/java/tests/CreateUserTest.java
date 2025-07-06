@@ -1,9 +1,8 @@
 package tests;
 
 import dto.ConfigurationReader;
-import dto.CreateUserRequest;
+import dto.LoginRequest;
 import io.restassured.http.ContentType;
-import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -32,17 +31,18 @@ public class CreateUserTest extends TestBase {
 
     @BeforeAll
     static void beforeAll() {
-        CreateUserRequest createUserRequest = new CreateUserRequest();
-        createUserRequest.setEmail(ConfigurationReader.get("email"));
-        createUserRequest.setPassword(ConfigurationReader.get("password"));
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setEmail(ConfigurationReader.get("email"));
+        loginRequest.setPassword(ConfigurationReader.get("password"));
 
-        skillCheckerCookies = given().spec(requestSpecification)
+        skillCheckerCookies = given()
+                .spec(requestSpecification)
                 .contentType(ContentType.JSON)
-                .body(createUserRequest)
+                .body(loginRequest)
                 .when()
                 .post("/login")
                 .then()
-                .log().all()
+                .statusCode(200)
                 .extract()
                 .cookie("connect.sid");
 

@@ -1,6 +1,6 @@
 package dto;
 
-public class CreateUserRequest {
+public class LoginRequest {
     private String email;
     private String password;
 
@@ -19,10 +19,9 @@ public class CreateUserRequest {
 
     @Override
     public String toString() {
-        return "CreateUserRequest{" +
-                "login='" + email + '\'' +
+        return "LoginRequest{" +
+                "email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 '}';
-
     }
 }
