@@ -1,20 +1,21 @@
 package tests;
 
+import dto.ConfigurationReader;
+import dto.CreateUserRequest;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static io.restassured.RestAssured.expect;
-import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.*;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 public class CreateUserTest extends TestBase {
-
-    RequestSpecification requestSpecification = given().contentType(ContentType.JSON);
 
     ResponseSpecification responseSpecification = expect().statusCode(201)
             .contentType(ContentType.JSON)
@@ -31,20 +32,21 @@ public class CreateUserTest extends TestBase {
 
     @BeforeAll
     static void beforeAll() {
+        CreateUserRequest createUserRequest = new CreateUserRequest();
+        createUserRequest.setEmail(ConfigurationReader.get("email"));
+        createUserRequest.setPassword(ConfigurationReader.get("password"));
 
-        skillCheckerCookies = given()
+        skillCheckerCookies = given().spec(requestSpecification)
                 .contentType(ContentType.JSON)
-                .body("""
-                        {
-                          "email": "admin@skillchecker.tech",
-                          "password": "admin123"
-                        }
-                        """)
+                .body(createUserRequest)
                 .when()
                 .post("/login")
                 .then()
+                .log().all()
                 .extract()
                 .cookie("connect.sid");
+
+        assertNotNull(skillCheckerCookies, "Login failed: connect.sid cookie is null");
     }
 
     @Test
