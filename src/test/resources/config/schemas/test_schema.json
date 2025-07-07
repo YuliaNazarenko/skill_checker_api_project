@@ -1,0 +1,14 @@
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": [
+      "id",
+      "organizationId",
+      "name",
+      "createdBy",
+      "isActive",
+      "passingScore"
+    ]
+  }
+}

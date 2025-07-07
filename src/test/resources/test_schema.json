@@ -1,7 +1,0 @@
-{
-  "type": "array",
-  "items": {
-    "type": "object",
-    "required": ["id", "name", "description", "isActive", "createdBy", "organizationId", "timeLimit", "passingScore"]
-  }
-}

@@ -1,0 +1,39 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "number"
+    },
+    "organizationId": {
+      "type": "number"
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "createdBy": {
+      "type": "number"
+    },
+    "timeLimit": {
+      "type": "number"
+    },
+    "isActive": {
+      "type": "boolean"
+    },
+    "passingScore": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "id",
+    "organizationId",
+    "name",
+    "description",
+    "createdBy",
+    "timeLimit",
+    "isActive",
+    "passingScore"
+  ]
+}

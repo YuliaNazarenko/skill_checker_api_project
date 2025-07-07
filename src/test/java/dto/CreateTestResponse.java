@@ -8,7 +8,7 @@ public class CreateTestResponse {
     private String name;
     private String description;
     private String createdBy;
-    private String timeLimit;
+    private int timeLimit;
     @JsonProperty("isActive")
     private boolean isActive;
     private int passingScore;
@@ -53,11 +53,11 @@ public class CreateTestResponse {
         this.createdBy = createdBy;
     }
 
-    public String getTimeLimit() {
+    public int getTimeLimit() {
         return timeLimit;
     }
 
-    public void setTimeLimit(String timeLimit) {
+    public void setTimeLimit(int timeLimit) {
         this.timeLimit = timeLimit;
     }
 
