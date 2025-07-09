@@ -1,8 +1,10 @@
 package dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CreateTestRequest {
     private String name;
-    private int intName;
     private String description;
     private String category;
     private int timeLimit;
@@ -14,10 +16,6 @@ public class CreateTestRequest {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public void setIntName(int intName) {
-        this.intName = intName;
     }
 
     public String getDescription() {
@@ -39,6 +37,7 @@ public class CreateTestRequest {
     public int getTimeLimit() {
         return timeLimit;
     }
+
     public void setTimeLimit(int timeLimit) {
         this.timeLimit = timeLimit;
     }
@@ -49,9 +48,5 @@ public class CreateTestRequest {
 
     public void setPassingScore(int passingScore) {
         this.passingScore = passingScore;
-    }
-
-    public int getIntName() {
-        return intName;
     }
 }

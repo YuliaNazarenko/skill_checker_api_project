@@ -27,6 +27,25 @@ public class TestsWrapper {
                 .post(BASE_PATH);
     }
 
+    public static Response createNewTestWithInvalidData(String cookie) {
+        String body = """
+                {
+                  "name": 123456,
+                  "description": "Invalid test",
+                  "category": "Some Category",
+                  "timeLimit": 150000,
+                  "passingScore": 200000
+                }
+                """;
+
+        return given(defaultSpec)
+                .cookie("connect.sid", cookie)
+                .contentType(ContentType.JSON)
+                .body(body)
+                .when()
+                .post(BASE_PATH);
+    }
+
     public static Response getTestById(int id, String cookie) {
         return given(defaultSpec)
                 .cookie("connect.sid", cookie)
@@ -36,6 +55,24 @@ public class TestsWrapper {
     }
 
     public static Response updateTest(long id, CreateTestRequest body, String cookie) {
+        return given(defaultSpec)
+                .cookie("connect.sid", cookie)
+                .pathParam("id", id)
+                .contentType("application/json")
+                .body(body)
+                .when()
+                .patch(BASE_PATH + "/{id}");
+    }
+
+    public static Response updateTestWithInvalidData(long id, String cookie) {
+        String body = """
+                {
+                  "name": 123456,
+                  "description": "Invalid test",
+                  "timeLimit": 150000,
+                  "passingScore": 200000
+                }
+                """;
         return given(defaultSpec)
                 .cookie("connect.sid", cookie)
                 .pathParam("id", id)

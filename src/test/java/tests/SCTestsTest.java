@@ -65,9 +65,7 @@ public class SCTestsTest extends TestBase {
     @Story("Create a new test with invalid data")
     void createNewTestNegative() {
 
-        CreateTestRequest createTestRequest = TestDataHelper.generateInvalidTest();
-
-        TestsWrapper.createNewTest(createTestRequest, skillCheckerCookies)
+        TestsWrapper.createNewTestWithInvalidData(skillCheckerCookies)
                 .then()
                 .statusCode(400)
                 .body(containsString("Test name must not be empty or whitespace only"));
@@ -124,9 +122,7 @@ public class SCTestsTest extends TestBase {
     @Story("Update test by ID with invalid data")
     @Order(4)
     void updateTestByInvalidData() {
-
-        CreateTestRequest createTestRequest = TestDataHelper.generateUpdatedTestWithInvalidData(savedId);
-        TestsWrapper.updateTest(savedId, createTestRequest, skillCheckerCookies)
+        TestsWrapper.updateTestWithInvalidData(savedId, skillCheckerCookies)
                 .then()
                 .statusCode(400)
                 .body(containsString("Invalid test data"));

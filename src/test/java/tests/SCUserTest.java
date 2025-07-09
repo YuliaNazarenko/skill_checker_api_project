@@ -32,11 +32,10 @@ public class SCUserTest extends TestBase {
                 .then()
                 .statusCode(200)
                 .body(matchesJsonSchemaInClasspath("config/schemas/user_schema.json"));
-
     }
 
     @Test
-    @DisplayName("Reset user password by ID")
+    @DisplayName("Reset user password by ID (valid password)")
     @Story("Reset user password by ID (valid password)")
     void resetUserPasswordById() {
 
@@ -49,7 +48,7 @@ public class SCUserTest extends TestBase {
     }
 
     @Test
-    @DisplayName("Reset user password by ID")
+    @DisplayName("Reset user password by ID (short password)")
     @Story("Reset user password by ID (short password)")
     void resetShortUserPasswordById() {
 
