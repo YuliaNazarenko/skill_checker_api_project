@@ -15,6 +15,7 @@ public class CreateTestRequest {
     public void setName(String name) {
         this.name = name;
     }
+
     public void setIntName(int intName) {
         this.intName = intName;
     }
@@ -48,5 +49,9 @@ public class CreateTestRequest {
 
     public void setPassingScore(int passingScore) {
         this.passingScore = passingScore;
+    }
+
+    public int getIntName() {
+        return intName;
     }
 }

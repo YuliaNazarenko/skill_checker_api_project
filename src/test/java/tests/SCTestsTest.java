@@ -1,47 +1,29 @@
 package tests;
 
-import dto.ConfigurationReader;
 import dto.CreateTestRequest;
 import dto.CreateTestResponse;
-import dto.LoginRequest;
+import helpers.AuthHelper;
 import helpers.TestDataHelper;
 import io.qameta.allure.Story;
-import io.restassured.http.ContentType;
 import org.junit.jupiter.api.*;
-import wrappers.TestsApi;
+import wrappers.TestsWrapper;
 
-import static io.restassured.RestAssured.given;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static specs.skillCheckSpecs.responseSpecification;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static specs.SkillCheckSpecs.responseSpecification;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 
-
-public class SkillCheckerTestsTest extends TestBase {
+@DisplayName("SkillChecker Test management API Tests")
+public class SCTestsTest extends TestBase {
 
     static int savedId;
     static String skillCheckerCookies = "";
 
     @BeforeAll
-    @DisplayName("Login and get cookies")
-    @Story("Login and get cookies")
     public static void login() {
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setEmail(ConfigurationReader.get("email"));
-        loginRequest.setPassword(ConfigurationReader.get("password"));
-
-        skillCheckerCookies = given()
-                .contentType(ContentType.JSON)
-                .body(loginRequest)
-                .when()
-                .post("/login")
-                .then()
-                .statusCode(200)
-                .extract()
-                .cookie("connect.sid");
-        assertNotNull(skillCheckerCookies, "Login failed: connect.sid cookie is null");
+        skillCheckerCookies = AuthHelper.loginAndGetCookie();
     }
 
 
@@ -49,7 +31,7 @@ public class SkillCheckerTestsTest extends TestBase {
     @DisplayName("Get all tests")
     @Story("Get all tests")
     void getAllTests() {
-        TestsApi.getAllTests(skillCheckerCookies)
+        TestsWrapper.getAllTests(skillCheckerCookies)
                 .then()
                 .statusCode(200)
                 .time(lessThan(2000L))
@@ -64,16 +46,16 @@ public class SkillCheckerTestsTest extends TestBase {
 
         CreateTestRequest createTestRequest = TestDataHelper.generateValidTest();
         CreateTestResponse createTestResponse =
-                TestsApi.createNewTest(createTestRequest, skillCheckerCookies)
+                TestsWrapper.createNewTest(createTestRequest, skillCheckerCookies)
                         .then()
                         .statusCode(201)
                         .extract()
                         .as(CreateTestResponse.class);
 
-        Assertions.assertEquals(createTestRequest.getName(), createTestResponse.getName());
-        Assertions.assertEquals(createTestRequest.getDescription(), createTestResponse.getDescription());
-        Assertions.assertEquals(createTestRequest.getTimeLimit(), createTestResponse.getTimeLimit());
-        Assertions.assertEquals(createTestRequest.getPassingScore(), createTestResponse.getPassingScore());
+        assertEquals(createTestRequest.getName(), createTestResponse.getName());
+        assertEquals(createTestRequest.getDescription(), createTestResponse.getDescription());
+        assertEquals(createTestRequest.getTimeLimit(), createTestResponse.getTimeLimit());
+        assertEquals(createTestRequest.getPassingScore(), createTestResponse.getPassingScore());
 
         savedId = Integer.parseInt(createTestResponse.getId());
     }
@@ -85,7 +67,7 @@ public class SkillCheckerTestsTest extends TestBase {
 
         CreateTestRequest createTestRequest = TestDataHelper.generateInvalidTest();
 
-        TestsApi.createNewTest(createTestRequest, skillCheckerCookies)
+        TestsWrapper.createNewTest(createTestRequest, skillCheckerCookies)
                 .then()
                 .statusCode(400)
                 .body(containsString("Test name must not be empty or whitespace only"));
@@ -96,7 +78,7 @@ public class SkillCheckerTestsTest extends TestBase {
     @Story("Get a test by its ID")
     @Order(2)
     void getTestById() {
-        TestsApi.getTestById(savedId, skillCheckerCookies)
+        TestsWrapper.getTestById(savedId, skillCheckerCookies)
                 .then()
                 .statusCode(200)
                 .spec(responseSpecification)
@@ -108,7 +90,7 @@ public class SkillCheckerTestsTest extends TestBase {
     @DisplayName("Get test by invalid ID")
     @Story("Get test by invalid ID")
     void getTestByIdNegative() {
-        TestsApi.getTestById(999999, skillCheckerCookies)
+        TestsWrapper.getTestById(999999, skillCheckerCookies)
                 .then()
                 .statusCode(404)
                 .body(containsString("Test not found"));
@@ -123,7 +105,7 @@ public class SkillCheckerTestsTest extends TestBase {
         CreateTestRequest createTestRequest = TestDataHelper.generateUpdatedTest(savedId);
 
         CreateTestResponse updateResponse =
-                TestsApi.updateTest(savedId, createTestRequest, skillCheckerCookies)
+                TestsWrapper.updateTest(savedId, createTestRequest, skillCheckerCookies)
                         .then()
                         .statusCode(200)
                         .body(matchesJsonSchemaInClasspath("config/schemas/test_schema_1.json"))
@@ -131,10 +113,10 @@ public class SkillCheckerTestsTest extends TestBase {
                         .extract()
                         .as(CreateTestResponse.class);
 
-        Assertions.assertEquals(createTestRequest.getName(), updateResponse.getName());
-        Assertions.assertEquals(createTestRequest.getDescription(), updateResponse.getDescription());
-        Assertions.assertEquals(createTestRequest.getTimeLimit(), updateResponse.getTimeLimit());
-        Assertions.assertEquals(createTestRequest.getPassingScore(), updateResponse.getPassingScore());
+        assertEquals(createTestRequest.getName(), updateResponse.getName());
+        assertEquals(createTestRequest.getDescription(), updateResponse.getDescription());
+        assertEquals(createTestRequest.getTimeLimit(), updateResponse.getTimeLimit());
+        assertEquals(createTestRequest.getPassingScore(), updateResponse.getPassingScore());
     }
 
     @Test
@@ -144,7 +126,7 @@ public class SkillCheckerTestsTest extends TestBase {
     void updateTestByInvalidData() {
 
         CreateTestRequest createTestRequest = TestDataHelper.generateUpdatedTestWithInvalidData(savedId);
-        TestsApi.updateTest(savedId, createTestRequest, skillCheckerCookies)
+        TestsWrapper.updateTest(savedId, createTestRequest, skillCheckerCookies)
                 .then()
                 .statusCode(400)
                 .body(containsString("Invalid test data"));
@@ -158,7 +140,7 @@ public class SkillCheckerTestsTest extends TestBase {
 
         CreateTestRequest createTestRequest = TestDataHelper.generateUpdatedTest(999999);
 
-        TestsApi
+        TestsWrapper
                 .updateTest(999999, createTestRequest, skillCheckerCookies)
                 .then()
                 .statusCode(404)
@@ -172,7 +154,7 @@ public class SkillCheckerTestsTest extends TestBase {
     void updateTestByInvalidIdWith500Error() {
         CreateTestRequest createTestRequest = TestDataHelper.generateUpdatedTest(112223445566L);
 
-        TestsApi.updateTest(112223445566L, createTestRequest, skillCheckerCookies)
+        TestsWrapper.updateTest(112223445566L, createTestRequest, skillCheckerCookies)
                 .then()
                 .statusCode(500)
                 .body(containsString("Failed to update test"));
@@ -183,11 +165,11 @@ public class SkillCheckerTestsTest extends TestBase {
     @Story("Delete test by ID")
     @Order(7)
     void deleteTestById() {
-        TestsApi
+        TestsWrapper
                 .deleteTest(savedId, skillCheckerCookies)
                 .then()
                 .statusCode(204);
-        TestsApi
+        TestsWrapper
                 .getTestById(savedId, skillCheckerCookies)
                 .then()
                 .statusCode(404)
@@ -199,7 +181,7 @@ public class SkillCheckerTestsTest extends TestBase {
     @Story("Delete test by invalid ID")
     void deleteTestByInvalidId() {
 
-        TestsApi
+        TestsWrapper
                 .getTestById(99999, skillCheckerCookies)
                 .then()
                 .statusCode(404)

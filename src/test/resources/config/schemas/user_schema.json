@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Generated schema for Root",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "number"
+      },
+      "organizationId": {
+        "type": "number"
+      },
+      "fullName": {
+        "type": "string"
+      },
+      "role": {
+        "type": "string"
+      },
+      "email": {
+        "type": "string"
+      },
+      "active": {
+        "type": "boolean"
+      },
+      "lastLogin": {
+        "type": ["null", "string"]
+      }
+    },
+    "required": [
+      "id",
+      "organizationId",
+      "fullName",
+      "role",
+      "email",
+      "active",
+      "lastLogin"
+    ]
+  }
+}

@@ -9,12 +9,10 @@ import static io.restassured.RestAssured.expect;
 import static io.restassured.RestAssured.with;
 import static org.hamcrest.Matchers.notNullValue;
 
-public class skillCheckSpecs {
+public class SkillCheckSpecs {
     public static RequestSpecification defaultSpec = with()
             .filter(withCustomTemplates())
-            .contentType(ContentType.JSON)
-            .log()
-            .all();
+            .contentType(ContentType.JSON);
 
     public static ResponseSpecification responseSpecification = expect()
             .contentType(ContentType.JSON)

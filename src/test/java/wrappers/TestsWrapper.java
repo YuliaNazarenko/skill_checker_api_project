@@ -5,9 +5,9 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
 import static io.restassured.RestAssured.given;
-import static specs.skillCheckSpecs.defaultSpec;
+import static specs.SkillCheckSpecs.defaultSpec;
 
-public class TestsApi {
+public class TestsWrapper {
     private static final String BASE_PATH = "/tests";
 
     public static Response getAllTests(String cookie) {
