@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.eurotechstudy</groupId>
-    <artifactId>skill_checker</artifactId>
+    <artifactId>skill_checker_api_project</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
@@ -31,7 +31,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.17.2</version>
+            <version>2.19.1</version>
         </dependency>
         <dependency>
             <groupId>io.rest-assured</groupId>
@@ -42,7 +42,7 @@
         <dependency>
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-rest-assured</artifactId>
-            <version>2.24.0</version>
+            <version>2.29.1</version>
         </dependency>
         <dependency>
             <groupId>io.qameta.allure</groupId>
@@ -76,9 +76,9 @@
                         <allure.results.directory>${project.basedir}/target/allure-results</allure.results.directory>
                         <junit.jupiter.extensions.autodetection.enabled>true
                         </junit.jupiter.extensions.autodetection.enabled>
-                        <junit.jupiter.execution.parallel.enabled>true
+                        <junit.jupiter.execution.parallel.enabled>false
                         </junit.jupiter.execution.parallel.enabled>
-                        <junit.jupiter.execution.parallel.config.strategy>dynamic
+                      <!--  <junit.jupiter.execution.parallel.config.strategy>dynamic
                         </junit.jupiter.execution.parallel.config.strategy>
                         <junit.jupiter.execution.parallel.mode.default>concurrent
                         </junit.jupiter.execution.parallel.mode.default>
@@ -87,7 +87,7 @@
                         <junit.jupiter.execution.parallel.config.strategy>fixed
                         </junit.jupiter.execution.parallel.config.strategy>
                         <junit.jupiter.execution.parallel.config.fixed.parallelism>1
-                        </junit.jupiter.execution.parallel.config.fixed.parallelism>
+                        </junit.jupiter.execution.parallel.config.fixed.parallelism> -->
                     </systemPropertyVariables>
                 </configuration>
                 <dependencies>
