@@ -6,6 +6,7 @@ pipeline {
     }
 
     tools {
+        git 'git-linux'
         maven 'Default'   // настрой Maven в Jenkins (Manage Jenkins → Tools → Maven)
         jdk 'Default'     // настрой JDK аналогично
     }
