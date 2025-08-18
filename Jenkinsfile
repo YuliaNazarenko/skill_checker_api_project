@@ -1,47 +1,24 @@
 pipeline {
-    agent { label 'aws' }  // гарантируем, что всё идёт через AWS-агент
-
-    triggers {
-        githubPush()
-    }
-
-    tools {
-        maven 'Default'   // настрой Maven в Jenkins (Manage Jenkins → Tools → Maven)
-        jdk 'Default'     // настрой JDK аналогично
-    }
-
+    agent any
     stages {
-        stage('Prepare Environment') {
+        stage('Build') {
             steps {
-                echo "Cleaning and preparing..."
-                sh 'mvn clean'
+                sh 'echo "Hello World"'
+                sh '''
+                    echo "Multiline shell steps works too"
+                    ls -lah
+                '''
             }
         }
-
-        stage('Run Tests') {
+        stage('Test') {
             steps {
-                echo "Running tests..."
-                sh 'mvn test'
-            }
-        }
-
-        stage('Publish Results') {
-            steps {
-                echo "Publishing test results..."
-                junit 'target/surefire-reports/*.xml'
-                allure([
-                    includeProperties: false,
-                    jdk: '',
-                    results: [[path: 'target/allure-results']]
-                ])
+                sh 'mvn clean test'
             }
         }
     }
-
     post {
         always {
-            echo 'Cleaning workspace...'
-            cleanWs()
+            junit 'target/surefire-reports/*.xml'
         }
     }
 }
