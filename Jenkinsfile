@@ -1,58 +1,49 @@
 pipeline {
-    agent { label 'aws' }  // весь пайплайн идёт на Linux-агенте
+    agent { label 'aws' }
 
-    options {
-        skipDefaultCheckout() // отключаем автоматический checkout на master
-    }
+    options { skipDefaultCheckout() }
 
     tools {
-        git 'git-linux'      // Git для Linux-агента
-        maven 'Default'      // Maven
-        jdk 'Default'        // JDK
-    }
-
-    triggers {
-        githubPush()
+        git 'git-linux'
+        maven 'Default'
+        jdk 'Default'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Явный checkout на Linux-агенте
-                git branch: 'main', url: 'https://github.com/YuliaNazarenko/skill_checker_api_project.git'
+                script {
+                    // ручной checkout с использованием Linux Git
+                    checkout([$class: 'GitSCM',
+                        branches: [[name: '*/main']],
+                        userRemoteConfigs: [[url: 'https://github.com/YuliaNazarenko/skill_checker_api_project.git']]
+                    ])
+                }
             }
         }
 
         stage('Prepare Environment') {
             steps {
-                echo "Cleaning and preparing..."
                 sh 'mvn clean'
             }
         }
 
         stage('Run Tests') {
             steps {
-                echo "Running tests..."
                 sh 'mvn test'
             }
         }
 
         stage('Publish Results') {
             steps {
-                echo "Publishing test results..."
                 junit 'target/surefire-reports/*.xml'
-                allure([
-                    includeProperties: false,
-                    jdk: '',
-                    results: [[path: 'target/allure-results']]
-                ])
+                allure([results: [[path: 'target/allure-results']]])
             }
         }
     }
 
     post {
         always {
-            echo 'Cleaning workspace...'
             cleanWs()
         }
     }
