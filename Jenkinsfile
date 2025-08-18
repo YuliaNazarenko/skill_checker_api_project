@@ -1,17 +1,28 @@
 pipeline {
-    agent { label 'aws' }  // гарантируем, что всё идёт через AWS-агент
+    agent { label 'aws' }  // весь пайплайн идёт на Linux-агенте
+
+    options {
+        skipDefaultCheckout() // отключаем автоматический checkout на master
+    }
+
+    tools {
+        git 'git-linux'      // Git для Linux-агента
+        maven 'Default'      // Maven
+        jdk 'Default'        // JDK
+    }
 
     triggers {
         githubPush()
     }
 
-    tools {
-        git 'git-linux'
-        maven 'Default'   // настрой Maven в Jenkins (Manage Jenkins → Tools → Maven)
-        jdk 'Default'     // настрой JDK аналогично
-    }
-
     stages {
+        stage('Checkout') {
+            steps {
+                // Явный checkout на Linux-агенте
+                git branch: 'main', url: 'https://github.com/your/repo.git'
+            }
+        }
+
         stage('Prepare Environment') {
             steps {
                 echo "Cleaning and preparing..."
