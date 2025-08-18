@@ -1,17 +1,22 @@
 pipeline {
-    agent { label 'aws-agent' }   // используем конкретный Linux агент
-        tools {
-            git 'Git-Linux'           // используем Linux Git из Global Tool Configuration
-        }
+    agent any
     stages {
-
-        stage('Test') {
+        stage('Build') {
             steps {
-                sh 'mvn clean test'
+                bat 'echo Hello World'  //Коммент ще
+                bat '''
+                    echo Multiline shell steps works too
+                    dir
+                '''
             }
         }
+        stage('Test') {
+                    steps {
+                        bat 'mvn test'
     }
-    post {
+}
+}
+post {
         always {
             junit 'target/surefire-reports/*.xml'
         }
