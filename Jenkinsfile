@@ -19,7 +19,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Явный checkout на Linux-агенте
-                git branch: 'main', url: 'https://github.com/your/repo.git'
+                git branch: 'main', url: 'https://github.com/YuliaNazarenko/skill_checker_api_project.git'
             }
         }
 
