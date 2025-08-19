@@ -40,7 +40,7 @@ public class SCUserTest extends TestBase {
     void resetUserPasswordById() {
 
         CreateUsersRequest createUsersRequest = UsersDataHelper.generateUserPassword();
-        UsersWrapper.resetUserPasswordById(createUsersRequest, skillCheckerCookies, 25)
+        UsersWrapper.resetUserPasswordById(createUsersRequest, skillCheckerCookies, 24)
                 .then()
                 .statusCode(200)
                 .assertThat()
