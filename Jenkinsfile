@@ -1,46 +1,32 @@
 pipeline {
     agent { label 'aws' }
 
-    triggers {
-        githubPush()
-    }
-
-     tools {
-            maven 'maven1'
-        }
-
     stages {
-        stage('Prepare Environment') {
+        stage('Checkout') {
             steps {
-                echo "Cleaning and preparing..."
-                sh 'mvn clean'
+                checkout scm
             }
         }
 
-        stage('Run Tests') {
+        stage('Build and Test') {
             steps {
-                echo "Running tests..."
-                sh 'mvn test'
-            }
-        }
-
-        stage('Publish Results') {
-            steps {
-                echo "Publishing test results..."
-                junit 'target/surefire-reports/*.xml'
-                allure([
-                    includeProperties: false,
-                    jdk: '',
-                    results: [[path: 'target/allure-results']]
-                ])
+                sh '''
+                    echo "Building and testing project with Maven..."
+                    mvn clean test
+                '''
             }
         }
     }
 
     post {
+        success {
+            echo 'Build and tests passed successfully!'
+        }
+        failure {
+            echo 'Build or tests failed.'
+        }
         always {
-            echo 'Cleaning workspace...'
-            cleanWs()
+            echo 'Pipeline finished.'
         }
     }
 }
