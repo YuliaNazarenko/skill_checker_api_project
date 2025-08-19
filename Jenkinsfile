@@ -1,43 +1,42 @@
 pipeline {
-    agent none // отключаем агент для всей декларации
+    agent { label 'aws' }
+
+    tools {
+        // используем JDK и Maven, настроенные в Jenkins Global Tool Configuration
+          maven 'maven1'
+    }
 
     stages {
         stage('Checkout') {
-            agent { label 'aws' } // checkout идёт только на Linux
             steps {
-                git branch: 'main', url: 'https://github.com/YuliaNazarenko/skill_checker_api_project.git'
+                // Явно указываем, что используем Git tool с именем "Default"
+                checkout([$class: 'GitSCM',
+                    branches: [[name: '*/main']],      // нужная ветка
+                    userRemoteConfigs: [[url: 'https://github.com/YuliaNazarenko/skill_checker_api_project.git']],
+                    gitTool: 'Default'
+                ])
             }
         }
 
-        stage('Prepare Environment') {
-            agent { label 'aws' } // тоже на Linux
+        stage('Build and Test') {
             steps {
-                sh 'mvn clean'
-            }
-        }
-
-        stage('Run Tests') {
-            agent { label 'aws' }
-            steps {
-                sh 'mvn test'
-            }
-        }
-
-        stage('Publish Results') {
-            agent { label 'aws' }
-            steps {
-                junit 'target/surefire-reports/*.xml'
-                allure([results: [[path: 'target/allure-results']]])
+                sh '''
+                    echo "Building and testing project with Maven..."
+                    mvn clean test
+                '''
             }
         }
     }
 
     post {
+        success {
+            echo 'Build and tests passed successfully!'
+        }
+        failure {
+            echo 'Build or tests failed.'
+        }
         always {
-            agent { label 'aws' }
-            steps {
-                cleanWs()
-            }
+            echo 'Pipeline finished.'
         }
     }
 }
