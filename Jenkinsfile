@@ -16,6 +16,18 @@ pipeline {
                 '''
             }
         }
+
+        stage('Publish Results') {
+                    steps {
+                        echo "Publishing test results..."
+                        junit 'target/surefire-reports/*.xml'
+                        allure([
+                            includeProperties: false,
+                            jdk: '',
+                            results: [[path: 'target/allure-results']]
+                        ])
+                    }
+                }
     }
 
     post {
