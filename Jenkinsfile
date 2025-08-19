@@ -5,6 +5,10 @@ pipeline {
         githubPush()
     }
 
+     tools {
+            maven 'maven1'
+        }
+
     stages {
         stage('Prepare Environment') {
             steps {
