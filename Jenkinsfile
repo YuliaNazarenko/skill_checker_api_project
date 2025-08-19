@@ -1,9 +1,6 @@
 pipeline {
     agent { label 'aws' }
 
-    tools {
-        maven 'maven1'  // Maven, настроенный в Jenkins Global Tool Configuration
-    }
 
     stages {
         stage('Checkout') {
