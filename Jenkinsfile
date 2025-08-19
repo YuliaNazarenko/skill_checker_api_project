@@ -1,34 +1,42 @@
 pipeline {
     agent { label 'aws' }
 
+    triggers {
+        githubPush()
+    }
 
     stages {
-        stage('Checkout') {
+        stage('Prepare Environment') {
             steps {
-                // Просто checkout, Jenkins сам выберет Git
-                checkout scm
+                echo "Cleaning and preparing..."
+                sh 'mvn clean'
             }
         }
 
-        stage('Build and Test') {
+        stage('Run Tests') {
             steps {
-                sh '''
-                    echo "Building and testing project with Maven..."
-                    mvn clean test
-                '''
+                echo "Running tests..."
+                sh 'mvn test'
+            }
+        }
+
+        stage('Publish Results') {
+            steps {
+                echo "Publishing test results..."
+                junit 'target/surefire-reports/*.xml'
+                allure([
+                    includeProperties: false,
+                    jdk: '',
+                    results: [[path: 'target/allure-results']]
+                ])
             }
         }
     }
 
     post {
-        success {
-            echo 'Build and tests passed successfully!'
-        }
-        failure {
-            echo 'Build or tests failed.'
-        }
         always {
-            echo 'Pipeline finished.'
+            echo 'Cleaning workspace...'
+            cleanWs()
         }
     }
 }
