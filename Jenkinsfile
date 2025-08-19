@@ -2,19 +2,14 @@ pipeline {
     agent { label 'aws' }
 
     tools {
-        // используем JDK и Maven, настроенные в Jenkins Global Tool Configuration
-          maven 'maven1'
+        maven 'maven1'  // Maven, настроенный в Jenkins Global Tool Configuration
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Явно указываем, что используем Git tool с именем "Default"
-                checkout([$class: 'GitSCM',
-                    branches: [[name: '*/main']],      // нужная ветка
-                    userRemoteConfigs: [[url: 'https://github.com/YuliaNazarenko/skill_checker_api_project.git']],
-                    gitTool: 'Default'
-                ])
+                // Просто checkout, Jenkins сам выберет Git
+                checkout scm
             }
         }
 
